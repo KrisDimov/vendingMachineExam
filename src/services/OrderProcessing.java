@@ -10,7 +10,7 @@ public class OrderProcessing {
 		
 		if (!Basket.getBasket().isEmpty()) {
 			
-			if (Bank.insertedAmount() < Basket.getBasketAmount()) {
+			if (Bank.insertedAmount() < (int)(Basket.getBasketAmount()*100)) {
 				System.out.println("Please insert more coins.");
 			} else {
 				
