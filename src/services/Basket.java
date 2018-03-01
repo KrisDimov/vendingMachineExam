@@ -1,10 +1,12 @@
 package services;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.TreeMap;
 
 import lists.ProductsList;
 import models.Product;
@@ -24,15 +26,15 @@ public class Basket {
 	}
 
 	public static void cancelOrder() {
-		
+
 		for (Integer key : basket.keySet()) {
 			ProductsList.cancelOrder(key, basket.get(key).getQuantity());
 		}
-	
+
 		clearBasket();
-		
+
 	}
-	
+
 	public static void clearBasket() {
 		basket.clear();
 	}
@@ -40,30 +42,54 @@ public class Basket {
 	public static void showBasketAmount() {
 
 		if (getBasketAmount() != 0) {
-		
-		List<Float> cost = new ArrayList<>();
 
-		float positionCost;
+			Map<Float, Integer> basketAmountSorting = new TreeMap<>(Collections.reverseOrder());
 
-		for (Integer position : basket.keySet()) {
+			float positionCost;
 
-			positionCost = basket.get(position).getQuantity() * basket.get(position).getPrice();
+			int length = 0;
+			
+			for (Integer position : basket.keySet()) {
 
-			cost.add(positionCost);
+				positionCost = basket.get(position).getQuantity() * basket.get(position).getPrice();
 
-			System.out.printf("%d x %s x $ %.2f = $ %.2f%n", basket.get(position).getQuantity(),
-					basket.get(position).getName(), basket.get(position).getPrice(), positionCost);
+				basketAmountSorting.put(positionCost, position);
+				
+				if (basket.get(position).getName().length() > length) {
+					length = basket.get(position).getName().length();
+				}
 
-		}
+			}
 
-		System.out.printf("Total: $ %.2f%n", getBasketAmount());
-		
+			StringBuilder sb = new StringBuilder();
+			
+			for (Float cost : basketAmountSorting.keySet()) {
+
+				if (basket.get(basketAmountSorting.get(cost)).getName().length() < length) {
+					for (int i = 0; i < (length - basket.get(basketAmountSorting.get(cost)).getName().length()); i++) {
+						sb.append(" ");
+					}
+				}
+				
+				System.out.printf("%2d x %s%s x $ %.2f = $ %.2f%n", basket.get(basketAmountSorting.get(cost)).getQuantity(),
+						basket.get(basketAmountSorting.get(cost)).getName(), sb.toString(), basket.get(basketAmountSorting.get(cost)).getPrice(), cost);
+
+				sb.setLength(0);
+				
+			}
+
+			for (int i = 0; i < length; i++) {
+				sb.append(" ");
+			}
+			
+			System.out.printf("%s%sTotal: $ %.2f%n", "         ", sb.toString(), getBasketAmount());
+
 		} else {
-			
+
 			System.out.println("No products in you basket yet.");
-			
+
 		}
-		
+
 		System.out.println();
 	}
 
@@ -85,8 +111,11 @@ public class Basket {
 
 		if (!basket.isEmpty()) {
 
+			StringBuilder sb = new StringBuilder();
+			
 			for (Integer position : basket.keySet()) {
-				System.out.printf("%d - %d x %s%n", basket.get(position).getId(), basket.get(position).getQuantity(),
+				
+				System.out.printf("%2d - %2d x %s%n", basket.get(position).getId(), basket.get(position).getQuantity(),
 						basket.get(position).getName());
 			}
 
@@ -97,20 +126,20 @@ public class Basket {
 		}
 
 		System.out.println();
-		
+
 	}
 
 	public static void removeProduct(Scanner input) {
 
 		/**
-		 *  A lot of if's in this method
+		 * A lot of if's in this method
 		 */
-		
+
 		if (basket.isEmpty()) {
 			System.out.println("No products in you basket yet.");
 			return;
 		} else {
-			
+
 			System.out.println("In your basket you have:");
 
 			showBasket();
@@ -142,9 +171,9 @@ public class Basket {
 			}
 
 			ProductsList.cancelOrder(productId, productQuantity);
-			
+
 			System.out.println("Done");
-			
+
 		}
 
 		System.out.println();
@@ -161,7 +190,8 @@ public class Basket {
 
 		System.out.printf("How many %s would you like?%n", ProductsList.getMap().get(productId).getName());
 
-		int productQuantity = quantityValidation(input, productId, ProductsList.getMap());;
+		int productQuantity = quantityValidation(input, productId, ProductsList.getMap());
+		;
 
 		if (basket.containsKey(productId)) {
 
@@ -186,7 +216,7 @@ public class Basket {
 		}
 
 		ProductsList.proceedOrder(productId, productQuantity);
-		
+
 		System.out.printf("%d %s %s added to your basket.%n", productQuantity,
 				ProductsList.getMap().get(productId).getName(), (productQuantity > 1 ? "were" : "has been"));
 

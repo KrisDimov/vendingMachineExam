@@ -31,22 +31,6 @@ public class NumberValidation {
 			return check(input);
 		}
 		
-		/*
-		 ** Question
-		 * 
-		 * That was the initial idea, but it didn't work for some reason.
-		 * 
-		 * if (input.hasNextInt()) {
-		 * 
-		 * return input.nextInt();
-		 * 
-		 * }
-		 * 
-		 * System.out.println("Please enter a number.");
-		 * 
-		 * return numberValidation(input);
-		 */
-		
 	}
 
 }
