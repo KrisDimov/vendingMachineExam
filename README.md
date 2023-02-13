@@ -1,3 +1,2 @@
 # VendingMachine
-Kris
-Kris
+Effortel
